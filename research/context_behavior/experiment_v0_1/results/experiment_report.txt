@@ -1,0 +1,22 @@
+GENESIS CONTEXT BEHAVIOR EXPERIMENT v0.1
+
+Question
+Does a past-only context-conditioned temperature baseline reveal persistent behavioral deviation, while remaining distinguishable from label-randomization noise?
+
+Dataset
+138 streams; 235854 observations; 17 positive-label streams; 121 negative-label streams.
+
+Method
+Past-only median temperature baseline conditioned on position bins (25) and voltage bins (100). At least 5 prior observations are required. A deviation >= 5.0 C for 3 consecutive observations is called a persistent deviation. Labels are excluded from baseline construction.
+
+Result
+Positive-label streams with persistent deviation: 11/17.
+Negative-label streams with persistent deviation: 7/121.
+Persistent observations overlapping positive labels: 557.
+Persistent observations in negative labels: 678.
+
+Randomized-label control
+After shuffling labels within each stream (seed 20261002), persistent observations assigned a positive label: 111; streams with any control overlap: 9.
+
+Interpretation
+The contextual-deviation signal is present in part of the positive-label population, but it also appears in negative-label streams. Therefore this experiment does not establish a failure detector. The randomized-label control also shows that label overlap alone is not sufficient evidence. The next step, if pursued, is to test whether a better context representation reduces negative-stream detections without using labels.

@@ -1,0 +1,33 @@
+{
+  "experiment": "Context Behavior Experiment v0.2",
+  "question": "Does adding label-independent operating context (motion direction and voltage trend) to the v0.1 position/voltage context reduce detections in negative-label streams while preserving contextual deviation signal?",
+  "streams": 138,
+  "positive_streams": 17,
+  "negative_streams": 121,
+  "observations": 235854,
+  "positive_observations": 17063,
+  "eligible_context_observations": 208720,
+  "persistent_deviations": 886,
+  "persistent_positive": 462,
+  "persistent_negative": 424,
+  "positive_streams_with_persistent_deviation": 10,
+  "negative_streams_with_persistent_deviation": 7,
+  "positive_streams_with_persistent_overlap": 9,
+  "parameters": {
+    "position_bin": 25,
+    "voltage_bin": 100,
+    "context_extensions": [
+      "motion_direction_sign",
+      "voltage_change_sign"
+    ],
+    "min_history": 5,
+    "deviation_threshold": 5.0,
+    "persistence": 3
+  },
+  "randomized_label_control": {
+    "seed": 20261002,
+    "persistent_positive_observations_after_shuffle": 89,
+    "streams_with_control_overlap": 8
+  },
+  "interpretation": "Research evidence only. Labels are used only for evaluation and are never used to construct the baseline or trigger the deviation signal."
+}

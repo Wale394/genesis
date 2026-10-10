@@ -1,0 +1,44 @@
+{
+  "experiment": "GENESIS Behavioral Baseline Prototype v0.2",
+  "ground_truth_used": false,
+  "runs": {
+    "20240325_155003": {
+      "observations": 6652,
+      "drift_hits": 503,
+      "first_hit": {
+        "time": 84317.00658,
+        "temperature": 45.0,
+        "position": 487.0,
+        "net_temperature_change": 7.0,
+        "position_range": 1.0
+      },
+      "last_hit": {
+        "time": 84373.38565,
+        "temperature": 55.0,
+        "position": 487.0,
+        "net_temperature_change": 5.0,
+        "position_range": 1.0
+      },
+      "max_net_temperature_change": 200.0
+    },
+    "20240325_152902": {
+      "observations": 6078,
+      "drift_hits": 38,
+      "first_hit": {
+        "time": 83367.468791961,
+        "temperature": 45.0,
+        "position": 442.0,
+        "net_temperature_change": 13.0,
+        "position_range": 1.0
+      },
+      "last_hit": {
+        "time": 83371.506206989,
+        "temperature": 45.0,
+        "position": 442.0,
+        "net_temperature_change": 10.0,
+        "position_range": 1.0
+      },
+      "max_net_temperature_change": 217.0
+    }
+  }
+}

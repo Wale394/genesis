@@ -1,0 +1,20 @@
+{
+  "session_id": "FIELD-001",
+  "robot_id": "R1",
+  "manufacturer": "ABB",
+  "robot_type": "AMR",
+  "telemetry_mapping": {},
+  "field_units": {
+    "motor_temperature": "C",
+    "ambient_temperature": "C",
+    "battery_temperature": "C",
+    "battery_voltage": "V",
+    "battery_current": "A",
+    "battery_level": "%",
+    "workload": "%",
+    "power_consumption": "W",
+    "voltage_drop": "V"
+  },
+  "output_path": "field-session.json",
+  "genesis_analysis_enabled": false
+}

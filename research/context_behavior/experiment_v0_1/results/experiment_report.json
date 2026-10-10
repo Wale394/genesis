@@ -1,0 +1,29 @@
+{
+  "experiment": "Context Behavior Experiment v0.1",
+  "question": "Does a past-only context-conditioned temperature baseline reveal persistent behavioral deviation, while remaining distinguishable from label-randomization noise?",
+  "streams": 138,
+  "positive_streams": 17,
+  "negative_streams": 121,
+  "observations": 235854,
+  "positive_observations": 17063,
+  "eligible_context_observations": 227187,
+  "persistent_deviations": 1235,
+  "persistent_positive": 557,
+  "persistent_negative": 678,
+  "positive_streams_with_persistent_deviation": 11,
+  "negative_streams_with_persistent_deviation": 7,
+  "positive_streams_with_persistent_overlap": 10,
+  "parameters": {
+    "position_bin": 25,
+    "voltage_bin": 100,
+    "min_history": 5,
+    "deviation_threshold": 5.0,
+    "persistence": 3
+  },
+  "randomized_label_control": {
+    "seed": 20261002,
+    "persistent_positive_observations_after_shuffle": 111,
+    "streams_with_control_overlap": 9
+  },
+  "interpretation": "Research evidence only. A positive/negative label is used only for evaluation; labels are never used to build the baseline or trigger the deviation signal."
+}

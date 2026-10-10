@@ -1,0 +1,22 @@
+GENESIS CONTEXT BEHAVIOR EXPERIMENT v0.2
+
+Question
+Does adding label-independent operating context (motion direction and voltage trend) to the v0.1 position/voltage context reduce detections in negative-label streams while preserving contextual deviation signal?
+
+Dataset
+138 streams; 235854 observations; 17 positive-label streams; 121 negative-label streams.
+
+Method
+The v0.1 context is retained: position bins (25) and voltage bins (100). v0.2 adds two label-independent context dimensions: the sign of the immediately preceding position change (negative/stationary/positive) and the sign of the immediately preceding voltage change (negative/stationary/positive). Expected temperature is the median of prior observations in the exact context key. At least 5 prior observations are required. The detection rule is unchanged: deviation >= 5.0 C for 3 consecutive observations.
+
+Result
+Positive-label streams with persistent deviation: 10/17.
+Negative-label streams with persistent deviation: 7/121.
+Persistent observations overlapping positive labels: 462.
+Persistent observations in negative labels: 424.
+
+Randomized-label control
+After shuffling labels within each stream (seed 20261002), persistent observations assigned a positive label: 89; streams with any control overlap: 8.
+
+Interpretation
+This experiment is research evidence only. It tests whether a modest, label-independent context expansion reduces detections in negative-label streams while retaining signal in positive-label streams. It does not establish failure causation or a deployable failure detector.

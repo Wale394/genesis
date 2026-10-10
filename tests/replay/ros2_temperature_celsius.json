@@ -1,0 +1,33 @@
+
+{
+  "test_case": "ros2_temperature_celsius",
+  "description": "Valid motor temperature expressed in Celsius",
+  "expected": {
+    "accepted": true,
+    "robot_id": "REPLAY-ROBOT-001",
+    "motor_temperature_celsius": 40.0,
+    "live_ros_connection": false
+  },
+  "payload": {
+    "robot_id": "REPLAY-ROBOT-001",
+    "robot_type": "test_robot",
+    "diagnostic_array": {
+      "status": [
+        {
+          "name": "motor_temperature",
+          "level": 0,
+          "message": "Motor temperature measurement",
+          "values": [
+            {
+              "key": "motor_temperature",
+              "value": "40 C"
+            }
+          ]
+        }
+      ]
+    },
+    "field_units": {
+      "motor_temperature": "C"
+    }
+  }
+}

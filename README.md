@@ -1,0 +1,77 @@
+# KORDEX — Engineering Intelligence
+
+**Evidence-driven reliability analysis for robots and physical systems.**
+
+KORDEX is an early-stage project exploring how telemetry, historical observations, evidence quality, and operating context can help engineers investigate unusual behavior in robotic and other physical systems. The current Python engine is still internally named **Genesis**.
+
+> **Project status:** research prototype. This repository is shared for technical review and discussion. It is not a validated safety-critical or predictive-maintenance product.
+
+## Why it exists
+
+Robot operators often need to distinguish an unusual measurement from a real asset problem. KORDEX is being developed to make that investigation more explicit: what was observed, what evidence supports the observation, what is missing, and what remains unknown.
+
+## What the current prototype includes
+
+- A local browser-based operator interface (KORDEX Command Center).
+- Python processing for submitted or recorded telemetry, including pattern and observation-quality assessments.
+- Evidence summaries and lineage links that describe traceable relationships without claiming causation.
+- Investigation records, recommendations, and explicit limitations/unknowns.
+- Adapters and experiments for exploring telemetry from different sources.
+
+The default interface scenario uses synthetic telemetry processed by the Python engine. The interface is local and read-only with respect to physical robots: it does not establish a live connection to a robot, and recommendations are not commands to control a physical system. The ROS 2 adapter in this prototype is a payload adapter/demo, not a live ROS connection.
+
+## What it does **not** prove
+
+- A detected pattern does not prove a mechanical fault or establish its cause.
+- The prototype has not established validated failure-prediction accuracy on representative field data.
+- Submitted data is not automatically sensor-authenticated; provenance depends on what the source actually provides.
+- Session memory and decision records are not a durable, signed, tamper-proof audit system.
+- It must not be used as the sole basis for safety-critical maintenance or operational decisions. Human review is required.
+
+## Run the local interface
+
+Requirements: Python 3.11+ recommended. The core interface is designed to run with the Python standard library; tests use `pytest`, and some offline research scripts require additional packages and datasets that are intentionally not bundled in this public preview.
+
+From the repository root:
+
+```bash
+python -m genesis_interface.server
+```
+
+Then open <http://127.0.0.1:8765>. The server binds to loopback by default. Do not expose it to a network without appropriate authentication, authorization, and deployment hardening.
+
+To run the tests that do not require separately supplied research datasets, install pytest and run selected tests, for example:
+
+```bash
+python -m pip install pytest
+python -m pytest -q test_observation_quality.py test_telemetry_pattern_engine.py test_genesis_interface.py
+```
+
+This is an example of a focused test selection, not a claim that the complete suite has been run against this public package. Some research tests expect excluded datasets or optional analysis dependencies.
+
+## Architecture at a glance
+
+1. **Input and context** — telemetry observations and available operating context.
+2. **Quality and pattern analysis** — checks data readiness and identifies unusual behavior.
+3. **Evidence synthesis** — records supporting observations, missing links, and limitations.
+4. **Decision and investigation output** — communicates the engine assessment and a recommendation for human review.
+
+See `GENESIS_ARCHITECTURE_V0_1.md`, `GENESIS_COMPONENT_MAP.md`, `GENESIS_SECURITY_MODEL_V0_1.md`, and `genesis_interface/README.md` for deeper technical detail.
+
+## Roadmap
+
+- Improve operator-facing investigation explanations.
+- Validate the pipeline against appropriately licensed, documented recorded datasets.
+- Measure false positives, false negatives, and performance under operating-context changes.
+- Improve provenance, repeatability, and evidence traceability.
+- Explore integrations only after interface boundaries and safety requirements are clearly defined.
+
+## Data and privacy
+
+Raw datasets, large observation-level exports, local caches, and generated session artifacts are intentionally excluded from this public preview. If you contribute or reproduce an experiment, document the dataset source, license, labels, preprocessing, and limitations. Never upload private robot telemetry or credentials without authorization.
+
+## License and contributions
+
+No open-source license has been applied yet. Until a license is added, no permission is granted to reuse, modify, or redistribute this code beyond rights provided by applicable law. Please contact the project owner before reusing it.
+
+This repository is currently published for review and feedback; please open an issue before proposing substantial changes.

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://genesis.example/schemas/field-session-0.1.json",
+  "title": "Genesis Field Session",
+  "description": "Read-only telemetry observations and optional Genesis analysis results.",
+  "type": "object",
+  "required": ["schema_version", "session", "observations", "genesis_results"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "session": {
+      "type": "object",
+      "required": ["session_id", "robot", "source"],
+      "properties": {
+        "session_id": {"type": "string", "minLength": 1},
+        "robot": {
+          "type": "object",
+          "required": ["robot_id"],
+          "properties": {
+            "robot_id": {"type": "string", "minLength": 1},
+            "manufacturer": {"type": ["string", "null"]},
+            "robot_type": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        },
+        "source": {"type": "string", "minLength": 1},
+        "sampling_context": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["expected_interval", "allowed_jitter"],
+              "properties": {
+                "expected_interval": {"type": "number", "exclusiveMinimum": 0},
+                "allowed_jitter": {"type": "number", "minimum": 0}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["telemetry", "source_metadata", "limitations"],
+        "properties": {
+          "telemetry": {
+            "type": "object",
+            "properties": {
+              "time_step": {"type": ["number", "null"]},
+              "motor_temperature": {"type": ["number", "null"]},
+              "ambient_temperature": {"type": ["number", "null"]},
+              "battery_level": {"type": ["number", "null"]},
+              "battery_voltage": {"type": ["number", "null"]},
+              "battery_current": {"type": ["number", "null"]},
+              "battery_temperature": {"type": ["number", "null"]},
+              "power_consumption": {"type": ["number", "null"]},
+              "voltage_drop": {"type": ["number", "null"]},
+              "workload": {"type": ["number", "null"]},
+              "robot_state": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          },
+          "source_metadata": {"type": "object"},
+          "limitations": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "genesis_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["observation_index", "result"],
+        "properties": {
+          "observation_index": {"type": "integer", "minimum": 0},
+          "result": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

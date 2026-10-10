@@ -1,0 +1,1 @@
+"""Genesis domain adapters."""
