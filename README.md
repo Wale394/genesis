@@ -49,9 +49,33 @@ python -m pytest -q test_observation_quality.py test_telemetry_pattern_engine.py
 
 This is an example of a focused test selection, not a claim that the complete suite has been run against this public package. Some research tests expect excluded datasets or optional analysis dependencies.
 
+## Guided offline investigation
+
+For the shortest path from an unfamiliar telemetry file to a reviewed mapping and report, use the interactive workflow:
+
+```powershell
+python kordex_guided_investigation.py --input "/path/to/your-telemetry.csv"
+```
+
+The wizard inspects CSV, JSON, JSONL, or NDJSON fields, shows samples and missing-value counts, asks you to confirm the timestamp and source units, saves a mapping for review, and asks before running the offline investigation. It does not connect to a robot. Name-based suggestions are hints only; verify signal meaning and units against source documentation. See [`GUIDED_OFFLINE_INVESTIGATION.md`](GUIDED_OFFLINE_INVESTIGATION.md).
+
 ## Try KORDEX with your own recorded telemetry
 
 You can test KORDEX without owning a robot or installing ROS 2. The custom telemetry importer accepts recorded CSV, JSON, JSON Lines, and NDJSON files. It uses an explicit mapping file so you can tell KORDEX which source fields represent supported signals and which units they use.
+
+If you are not sure which fields your file contains, inspect it before writing a mapping:
+
+```powershell
+python inspect_telemetry.py --input examples/custom_robot_telemetry.csv
+```
+
+To create a **draft** mapping template from conservative field-name suggestions:
+
+```powershell
+python inspect_telemetry.py --input examples/custom_robot_telemetry.csv --template-out mapping-draft.json
+```
+
+The inspector shows sample values, missing counts, possible timestamp fields, and suggested signal names. It does not infer sensor units or run inference. Review the generated template and verify the meaning and units against the data source before using it. See [`TELEMETRY_FILE_INSPECTION.md`](TELEMETRY_FILE_INSPECTION.md).
 
 Start with the included synthetic CSV example:
 

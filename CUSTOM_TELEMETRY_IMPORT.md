@@ -18,6 +18,22 @@ python custom_telemetry_import.py --input examples/custom_robot_telemetry.json -
 
 Both examples are synthetic. They demonstrate the format, not real robot telemetry or validated failure prediction.
 
+## Inspect a file before creating its mapping
+
+If you do not know the column names or structure in your file, inspect it first:
+
+```powershell
+python inspect_telemetry.py --input "C:\path\to\your-telemetry.csv"
+```
+
+To create a draft mapping file from conservative field-name suggestions:
+
+```powershell
+python inspect_telemetry.py --input "C:\path\to\your-telemetry.csv" --template-out mapping-draft.json
+```
+
+The template is deliberately incomplete: confirm the timestamp unit and every signal unit, and verify the meaning of each field from the source documentation. The inspector does not run inference or authenticate the sensor source. See [`TELEMETRY_FILE_INSPECTION.md`](TELEMETRY_FILE_INSPECTION.md) for details.
+
 ## Use your own data
 
 Copy the relevant example mapping config and edit the robot identity, timestamp field/unit, and signal mappings to match your data. Then run:

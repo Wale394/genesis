@@ -38,3 +38,8 @@ kordex-behavior-comparison.json
 
 # Generated external demo outputs
 GENESIS_FIELD_TEST/demo-output/
+
+# KORDEX recorded-data investigation outputs
+kordex-guided-output/
+custom-telemetry-output/
+custom-telemetry-json-output/
