@@ -49,15 +49,41 @@ python -m pytest -q test_observation_quality.py test_telemetry_pattern_engine.py
 
 This is an example of a focused test selection, not a claim that the complete suite has been run against this public package. Some research tests expect excluded datasets or optional analysis dependencies.
 
+## Try KORDEX with your own recorded telemetry
+
+You can test KORDEX without owning a robot or installing ROS 2. The custom telemetry importer accepts recorded CSV, JSON, JSON Lines, and NDJSON files. It uses an explicit mapping file so you can tell KORDEX which source fields represent supported signals and which units they use.
+
+Start with the included synthetic CSV example:
+
+```bash
+python custom_telemetry_import.py --input examples/custom_robot_telemetry.csv --config custom-telemetry-mapping.example.json --output-dir custom-telemetry-output
+```
+
+Or use the JSON example:
+
+```bash
+python custom_telemetry_import.py --input examples/custom_robot_telemetry.json --config custom-telemetry-json-mapping.example.json --output-dir custom-telemetry-json-output
+```
+
+To investigate your own data, copy the appropriate example mapping file, edit the robot identity, timestamp field and unit, and signal mappings, then run:
+
+```bash
+python custom_telemetry_import.py --input "/path/to/your-telemetry.csv" --config "/path/to/your-mapping.json" --output-dir my-investigation
+```
+
+See [`CUSTOM_TELEMETRY_IMPORT.md`](CUSTOM_TELEMETRY_IMPORT.md) for supported signals and units, input requirements, mapping examples, and troubleshooting. The importer writes a session JSON, a structured investigation report, and a readable text report. Unmapped fields are listed and excluded from inference; unsupported mappings and invalid units fail explicitly.
+
+**Important:** this is offline recorded-data analysis. KORDEX cannot independently authenticate the source or confirm that declared units are correct. A detected pattern is not proof of physical failure, and this workflow is not a validated failure-prediction accuracy claim. Do not use it as the sole basis for safety-critical decisions.
+
 ## Try the offline field-test package
 
-Want to evaluate the telemetry-to-report workflow without connecting a robot? Start with [`GENESIS_FIELD_TEST/README.md`](GENESIS_FIELD_TEST/README.md). From the repository root, run:
+Want to evaluate the included diagnostic-message workflow without connecting a robot? Start with [`GENESIS_FIELD_TEST/README.md`](GENESIS_FIELD_TEST/README.md). From the repository root, run:
 
 ```bash
 python GENESIS_FIELD_TEST/run_example.py
 ```
 
-This processes the included **synthetic** diagnostic messages offline and writes a structured session plus a readable investigation report under `GENESIS_FIELD_TEST/demo-output/`. The example demonstrates the current pipeline; its state labels and recommendations are not calibrated to a real robot and are not validated diagnoses. To test your own recorded diagnostic export, follow the field-test README and map its keys and units carefully.
+This processes the included **synthetic** diagnostic messages offline and writes a structured session plus a readable investigation report under `GENESIS_FIELD_TEST/demo-output/`. The example demonstrates the current pipeline; its state labels and recommendations are not calibrated to a real robot and are not validated diagnoses.
 
 ## Architecture at a glance
 

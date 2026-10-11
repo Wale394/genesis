@@ -1,0 +1,18 @@
+{
+  "robot": {
+    "robot_id": "my-robot-01",
+    "manufacturer": "Unknown",
+    "robot_type": "mobile_robot"
+  },
+  "timestamp": {
+    "field": "timestamp_ms",
+    "unit": "ms"
+  },
+  "signals": [
+    {"field": "motor_temp_f", "target": "motor_temperature", "unit": "F"},
+    {"field": "ambient_temp_c", "target": "ambient_temperature", "unit": "C"},
+    {"field": "battery_percent", "target": "battery_level", "unit": "%"},
+    {"field": "battery_voltage_mv", "target": "battery_voltage", "unit": "mV"},
+    {"field": "state", "target": "robot_state", "unit": "state"}
+  ]
+}

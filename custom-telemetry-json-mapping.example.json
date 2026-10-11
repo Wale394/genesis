@@ -1,0 +1,14 @@
+{
+  "robot": {
+    "robot_id": "my-json-robot-01",
+    "manufacturer": "Unknown",
+    "robot_type": "mobile_robot"
+  },
+  "timestamp": {"field": "timestamp", "unit": "s"},
+  "signals": [
+    {"field": "sensors.motor_temp", "target": "motor_temperature", "unit": "C"},
+    {"field": "sensors.ambient_temp", "target": "ambient_temperature", "unit": "C"},
+    {"field": "sensors.battery_fraction", "target": "battery_level", "unit": "fraction"},
+    {"field": "robot.state", "target": "robot_state", "unit": "state"}
+  ]
+}

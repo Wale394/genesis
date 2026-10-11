@@ -1,0 +1,6 @@
+timestamp_ms,motor_temp_f,ambient_temp_c,battery_percent,battery_voltage_mv,state,maintenance_note
+1000,104,24,82,24000,running,inspection due
+2000,107.6,24.2,81,23900,running,inspection due
+3000,113,24.5,80,23750,active,inspection due
+4000,120.2,25,78,23500,active,inspection due
+5000,131,25.1,77,23200,idle,inspection due

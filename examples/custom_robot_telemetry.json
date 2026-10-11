@@ -1,0 +1,7 @@
+{
+  "observations": [
+    {"timestamp": 1, "robot": {"state": "running"}, "sensors": {"motor_temp": 40, "ambient_temp": 23, "battery_fraction": 0.91}},
+    {"timestamp": 2, "robot": {"state": "running"}, "sensors": {"motor_temp": 41, "ambient_temp": 23.2, "battery_fraction": 0.90}},
+    {"timestamp": 3, "robot": {"state": "idle"}, "sensors": {"motor_temp": 43, "ambient_temp": 23.5, "battery_fraction": 0.88}}
+  ]
+}
