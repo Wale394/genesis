@@ -12,6 +12,7 @@ from pathlib import Path
 
 from genesis import Genesis
 from investigation_report import build_field_session_report, render_investigation_report
+from kordex_offline_report_review import build_offline_data_review, render_offline_data_review
 
 SUPPORTED_TARGETS = {
     "motor_temperature", "ambient_temperature", "battery_level", "battery_voltage",
@@ -323,6 +324,7 @@ def run_custom_telemetry_investigation(input_path, config_path, output_dir):
     }
     report = build_field_session_report(session)
     report["field_test_context"] = deepcopy(session["field_test_context"])
+    report["offline_data_review"] = build_offline_data_review(session)
     out = Path(output_dir).expanduser()
     out.mkdir(parents=True, exist_ok=True)
     session_path = out / "field-session.json"
@@ -334,7 +336,8 @@ def run_custom_telemetry_investigation(input_path, config_path, output_dir):
         "KORDEX OFFLINE INVESTIGATION — USER-PROVIDED RECORDED DATA\n"
         "No live robot connection was made. Source identity and sensor units are not independently authenticated.\n"
         "Observed patterns are not proof of physical failure or validated failure prediction.\n\n"
-        + render_investigation_report(report) + "\n", encoding="utf-8"
+        + render_investigation_report(report) + "\n"
+        + render_offline_data_review(report["offline_data_review"]) + "\n", encoding="utf-8"
     )
     return {
         "observation_count": len(observations),

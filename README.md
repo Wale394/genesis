@@ -95,7 +95,7 @@ To investigate your own data, copy the appropriate example mapping file, edit th
 python custom_telemetry_import.py --input "/path/to/your-telemetry.csv" --config "/path/to/your-mapping.json" --output-dir my-investigation
 ```
 
-See [`CUSTOM_TELEMETRY_IMPORT.md`](CUSTOM_TELEMETRY_IMPORT.md) for supported signals and units, input requirements, mapping examples, and troubleshooting. The importer writes a session JSON, a structured investigation report, and a readable text report. Unmapped fields are listed and excluded from inference; unsupported mappings and invalid units fail explicitly.
+See [`CUSTOM_TELEMETRY_IMPORT.md`](CUSTOM_TELEMETRY_IMPORT.md) for supported signals and units, input requirements, mapping examples, and troubleshooting. The importer writes a session JSON, a structured investigation report, and a readable text report. Unmapped fields are listed and excluded from inference; unsupported mappings and invalid units fail explicitly. Reports also include a descriptive offline data review with mapped-signal completeness, value ranges, and timestamp intervals. It does not apply engineering thresholds or diagnose failures; see [`KORDEX_OFFLINE_REPORT_REVIEW.md`](KORDEX_OFFLINE_REPORT_REVIEW.md).
 
 **Important:** this is offline recorded-data analysis. KORDEX cannot independently authenticate the source or confirm that declared units are correct. A detected pattern is not proof of physical failure, and this workflow is not a validated failure-prediction accuracy claim. Do not use it as the sole basis for safety-critical decisions.
 
