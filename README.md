@@ -49,6 +49,16 @@ python -m pytest -q test_observation_quality.py test_telemetry_pattern_engine.py
 
 This is an example of a focused test selection, not a claim that the complete suite has been run against this public package. Some research tests expect excluded datasets or optional analysis dependencies.
 
+## Try the offline field-test package
+
+Want to evaluate the telemetry-to-report workflow without connecting a robot? Start with [`GENESIS_FIELD_TEST/README.md`](GENESIS_FIELD_TEST/README.md). From the repository root, run:
+
+```bash
+python GENESIS_FIELD_TEST/run_example.py
+```
+
+This processes the included **synthetic** diagnostic messages offline and writes a structured session plus a readable investigation report under `GENESIS_FIELD_TEST/demo-output/`. The example demonstrates the current pipeline; its state labels and recommendations are not calibrated to a real robot and are not validated diagnoses. To test your own recorded diagnostic export, follow the field-test README and map its keys and units carefully.
+
 ## Architecture at a glance
 
 1. **Input and context** — telemetry observations and available operating context.

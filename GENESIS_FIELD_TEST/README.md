@@ -1,6 +1,8 @@
 # Genesis Field Test — recorded telemetry package
 
-This is a small, self-contained external test package for processing a recorded ROS-like diagnostic stream with Genesis. It includes the actual Field Agent, adapter, public Genesis facade, and the local Genesis runtime modules needed by that analysis path. It does not contain the Genesis repository, model-training pipeline, simulator, datasets, or experimental validation code.
+This is a small, self-contained external test package for processing recorded ROS-like diagnostic messages with Genesis. It includes the Field Agent, adapter, public Genesis facade, and the local runtime modules needed by that analysis path. It does not contain the full Genesis repository, model-training pipeline, simulator, real robot datasets, or experimental validation code.
+
+**The included example is synthetic demonstration data, not telemetry from an ABB or any other real robot.** Its purpose is to show the data path and report format. Any state such as `CRITICAL`, engineering signal, or recommendation is the prototype applying its current generic rules; it is not calibrated to a particular robot model and is not a validated diagnosis or safety assessment.
 
 ## What it does
 
@@ -40,19 +42,23 @@ Sampling context is optional. Genesis does not assume a universal robot telemetr
 
 Both values are in seconds. `expected_interval` must be greater than zero and `allowed_jitter` must be nonnegative. Set `sampling_context` to `null` or omit it when cadence is unknown. With no context, Genesis reports observed timestamp intervals but does not classify them as missing telemetry. With context, an interval above `expected_interval + allowed_jitter` is marked `POSSIBLE_DATA_GAP`. That means the timestamps are farther apart than configured; it is not proof that any observations were lost.
 
-## Process recorded diagnostics
+## Quick start: run the complete example
 
-From this folder, use the included example:
+From this folder, run one command:
 
 ```powershell
-python genesis_field_agent.py --config config.example.json --input examples/recorded_diagnostics_example.json --output field-session.json
+python run_example.py
 ```
+
+The script writes two local files under `demo-output/`: `field-session.json` (the full structured session) and `investigation-report.txt` (the readable report). It prints the report and a reminder that the input is synthetic. The generated folder is ignored by Git.
+
+To process your own recorded diagnostics, use the lower-level command below.
 
 The input is an object with a `messages` array of ROS-like `DiagnosticArray` records. Each message uses `header.stamp`, `status[].name`, and `status[].values[]` with `key` and `value`, matching the existing adapter's supported duck-typed shape.
 
 ## Output
 
-The command writes `field-session.json` (or the path passed with `--output`) using `genesis_field_session_schema.json`. It contains chronological normalized telemetry with source metadata and limitations, and a separate `genesis_results` list. Each result includes the normal public Genesis investigation structure, including evidence synthesis, telemetry capability discovery, and available limitations. The example has no fitted model artifact, so it does not invent ML probabilities.
+The command writes `field-session.json` (or the path passed with `--output`) using `genesis_field_session_schema.json`. It contains chronological normalized telemetry with source metadata and limitations, and a separate `genesis_results` list. Each result includes the public Genesis investigation structure, including evidence synthesis, telemetry capability discovery, and available limitations. The example has no fitted model artifact, so it does not invent ML probabilities. Its `CRITICAL` state and recommendation demonstrate current prototype rule behavior only; do not interpret them as robot-specific thresholds or a confirmed fault.
 
 To render the saved session as an engineer-readable report, run:
 

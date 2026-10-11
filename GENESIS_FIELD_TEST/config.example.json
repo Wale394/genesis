@@ -1,8 +1,8 @@
 {
   "session_id": "FIELD-RECORDED-001",
   "robot_id": "FIELD-R001",
-  "manufacturer": "ABB",
-  "robot_type": "AMR",
+  "manufacturer": null,
+  "robot_type": "Synthetic mobile robot",
   "telemetry_mapping": {},
   "field_units": {
     "motor_temperature": "C",

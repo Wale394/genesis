@@ -35,3 +35,6 @@ field-session-*.json
 real-data-semantic-report.json
 kordex-*-results.json
 kordex-behavior-comparison.json
+
+# Generated external demo outputs
+GENESIS_FIELD_TEST/demo-output/
