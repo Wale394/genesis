@@ -1,0 +1,184 @@
+{
+  "schema_version": "1.1",
+  "project": {
+    "status": "PROTOTYPE_AND_ENGINEERING_VALIDATION",
+    "last_reviewed": "2026-10-12",
+    "source_of_truth": [
+      "GENESIS_ARCHITECTURE_V0_1.md",
+      "GENESIS_CAPABILITIES_AND_FUTURE_VISION_V0_1.docx"
+    ],
+    "source_note": "This charter distinguishes the Genesis project from the KORDEX reliability-intelligence system implemented within it. It separates current implementation from planned capabilities; roadmap items are not current capabilities unless implemented and independently verified.",
+    "project_name": "Genesis",
+    "system_name": "KORDEX"
+  },
+  "mission": "Build a trustworthy reliability-intelligence layer that turns operational observations into traceable evidence, uncertainty-aware assessments, investigations, recommendations, and reusable knowledge for engineers responsible for physical systems.",
+  "current_focus": {
+    "domain": "Robotics and heterogeneous autonomous fleets",
+    "product_positioning": "Genesis is the overall engineering project; KORDEX is its reliability-intelligence system.",
+    "near_term_goal": "Strengthen evidence quality, provenance, conflict handling, investigation, and real-telemetry validation while preserving the current architecture.",
+    "operating_mode": "Recorded/offline and local-session workflows first; any device integration remains read-only unless a separately governed future capability is explicitly implemented.",
+    "not_production_ready": true
+  },
+  "principles": [
+    {
+      "name": "Evidence before conclusion",
+      "rule": "A detected anomaly is not automatically a failure, diagnosis, or cause."
+    },
+    {
+      "name": "Uncertainty triggers investigation",
+      "rule": "Missing, degraded, conflicting, or untrusted evidence must limit conclusions rather than produce fabricated confidence."
+    },
+    {
+      "name": "Keep epistemic stages separate",
+      "rule": "Distinguish observation, evidence, inference, reliability state, recommendation, human action, and outcome."
+    },
+    {
+      "name": "Preserve provenance",
+      "rule": "Retain where evidence came from, what was transformed, what is unknown, and what limitations apply."
+    },
+    {
+      "name": "Memory is not automatic truth",
+      "rule": "Keep observations and hypotheses distinct from validated or refuted findings."
+    },
+    {
+      "name": "Human-supervised operations",
+      "rule": "Recommendations are advisory; no automatic robot control is implied by this project context."
+    },
+    {
+      "name": "Heterogeneous by design",
+      "rule": "Adapters may translate vendor/source payloads, but must not invent reliability conclusions."
+    }
+  ],
+  "current_architecture": {
+    "status": "DOCUMENTED_CURRENT_ARCHITECTURE_V0_1",
+    "flow": [
+      {
+        "name": "Sources and adapters",
+        "details": "Robot/simulator/ROS 2-like payloads; source-specific translation and metadata."
+      },
+      {
+        "name": "Normalization and history",
+        "details": "Canonical telemetry, unit/field normalization, per-robot history, shared feature contract."
+      },
+      {
+        "name": "Analysis and evidence producers",
+        "details": "Observation quality, telemetry patterns, engineering signals, optional model inference, diagnosis and risk outputs."
+      },
+      {
+        "name": "Context and memory",
+        "details": "Historical comparison, fleet context, recurrence context, reliability memory."
+      },
+      {
+        "name": "Decision pipeline",
+        "details": "Coordinates reliability fusion/state, recommendations, incident lifecycle and evidence synthesis."
+      },
+      {
+        "name": "Evidence and explanation",
+        "details": "Structured evidence, timeline, provenance, conflicts, limitations and investigation result."
+      },
+      {
+        "name": "KORDEX interface/API",
+        "details": "Presents returned results, session history, incidents, recommendations and audit records for human review."
+      }
+    ],
+    "offline_path": [
+      "Simulator or recorded dataset",
+      "Dataset and labels",
+      "Shared feature contract and feature engineering",
+      "Model training and artifact",
+      "Offline validation experiments"
+    ],
+    "boundaries": [
+      "Adapters ingest and normalize; they do not own reliability policy.",
+      "Telemetry patterns describe behavior; they do not independently prove cause or failure.",
+      "Fleet comparison and historical memory are context, not proof.",
+      "IncidentManager owns incident lifecycle transitions.",
+      "Offline simulator labels and training-only fields must not become runtime inference inputs.",
+      "Project-level goals and roadmap guide development but must not be treated as evidence about an individual robot."
+    ]
+  },
+  "roadmap": [
+    {
+      "phase": 1,
+      "name": "Consolidate the foundation",
+      "status": "IN_PROGRESS",
+      "goal": "Preserve the current architecture and make evidence contracts, boundaries, and outputs understandable."
+    },
+    {
+      "phase": 2,
+      "name": "Evidence hardening",
+      "status": "NEXT",
+      "goal": "Improve evidence independence, provenance, conflict reasoning, observation quality, and anomaly visibility."
+    },
+    {
+      "phase": 3,
+      "name": "Reliability and investigation lifecycle",
+      "status": "PLANNED",
+      "goal": "Improve recovery, hysteresis, reconfirmation, investigation planning, and reassessment."
+    },
+    {
+      "phase": 4,
+      "name": "Real-world validation",
+      "status": "PLANNED",
+      "goal": "Evaluate recorded real telemetry in read-only mode; measure false positives, missed events, and investigation usefulness."
+    },
+    {
+      "phase": 5,
+      "name": "Durable memory and retrieval",
+      "status": "PLANNED",
+      "goal": "Introduce durable storage and historical-case retrieval after memory contracts are stable."
+    },
+    {
+      "phase": 6,
+      "name": "Field intelligence",
+      "status": "PLANNED",
+      "goal": "Add carefully scoped live telemetry ingestion while maintaining read-only boundaries initially."
+    },
+    {
+      "phase": 7,
+      "name": "Human decision workflows",
+      "status": "PLANNED",
+      "goal": "Capture reviewed recommendations, human actions, and outcomes so validated experience can improve future investigations."
+    },
+    {
+      "phase": 8,
+      "name": "Controlled action interfaces",
+      "status": "FUTURE_GATED",
+      "goal": "Consider secure, bounded execution only after evidence, safety, identity, authorization, and governance requirements are met."
+    }
+  ],
+  "long_term_vision": {
+    "progression": [
+      "Robot",
+      "Fleet",
+      "Site",
+      "Multi-site",
+      "Industrial operations"
+    ],
+    "capabilities": [
+      "Continuous reliability monitoring across heterogeneous fleets",
+      "Cross-site reliability and trend analysis",
+      "Multimodal evidence from telemetry, events, maintenance records, diagnostics and eventually visual evidence",
+      "Evidence-driven investigations and incident replay",
+      "Durable reliability memory based on validated findings and outcomes",
+      "Human-supervised recommendations and carefully governed future action workflows",
+      "Stronger causal and counterfactual analysis only as supporting evidence justifies it"
+    ],
+    "potential_domains": [
+      "Robotics and logistics",
+      "Industrial manufacturing",
+      "Energy infrastructure",
+      "Data centers and critical infrastructure",
+      "Industrial vehicles and autonomous equipment",
+      "Other complex physical systems after domain-specific validation"
+    ],
+    "vision_is_not_current_capability": true
+  },
+  "explicit_non_goals_and_limits": [
+    "KORDEX is not another robot controller or robot operating system.",
+    "The current prototype is not a production-ready autonomous control system.",
+    "Universal failure prediction or physical causality has not been established.",
+    "A successful local test does not prove readiness for live fleet deployment.",
+    "Production-grade authentication, cryptography, durable distributed storage, and secure action infrastructure are future work unless separately implemented and verified."
+  ]
+}

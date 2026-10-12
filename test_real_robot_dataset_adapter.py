@@ -29,7 +29,10 @@ def write_motor_csv(directory, motor, rows, columns=("time", "position", "temper
 class RealRobotDatasetAdapterTests(unittest.TestCase):
     def test_loads_real_motor_csv_and_preserves_canonical_values(self):
         path = REAL_DATA_ROOT / REAL_RUN / "data_motor_1.csv"
-        self.assertTrue(path.is_file(), f"Expected local dataset file: {path}")
+        if not path.is_file():
+            self.skipTest(
+                "Optional external motor dataset is not included in the public release."
+            )
         with path.open("r", newline="", encoding="utf-8") as stream:
             source_rows = list(csv.DictReader(stream))
 
@@ -53,6 +56,10 @@ class RealRobotDatasetAdapterTests(unittest.TestCase):
         self.assertNotIn("label", first["telemetry"])
 
     def test_high_temperature_values_are_not_reinterpreted(self):
+        if not (REAL_DATA_ROOT / REAL_RUN / "data_motor_1.csv").is_file():
+            self.skipTest(
+                "Optional external motor dataset is not included in the public release."
+            )
         observations = RealRobotDatasetAdapter(REAL_DATA_ROOT, REAL_RUN, 1).load_observations()
         index = next(
             i for i, item in enumerate(observations)
@@ -63,6 +70,10 @@ class RealRobotDatasetAdapterTests(unittest.TestCase):
         self.assertEqual(item["source_metadata"]["original_values"]["temperature"], "254")
 
     def test_ground_truth_is_available_only_through_separate_validation_method(self):
+        if not (REAL_DATA_ROOT / REAL_RUN / "data_motor_1.csv").is_file():
+            self.skipTest(
+                "Optional external motor dataset is not included in the public release."
+            )
         adapter = RealRobotDatasetAdapter(REAL_DATA_ROOT, REAL_RUN, 1)
         observation = adapter.load_observations()[0]
         label = adapter.load_ground_truth()[0]

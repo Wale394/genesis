@@ -32,7 +32,16 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):  # noqa: N802
         path = urlparse(self.path).path
         if path == "/api/health":
-            self._send_json(200, {"status": "online", "engine": "Genesis"})
+            self._send_json(200, {"status": "online", "system": "KORDEX", "project": "Genesis"})
+            return
+        if path == "/api/project-context":
+            context_path = Path(__file__).resolve().parents[1] / "project_context.json"
+            try:
+                context = json.loads(context_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                self._send_json(500, {"error": "project context is unavailable"})
+                return
+            self._send_json(200, context)
             return
         if path == "/api/state":
             self._send_json(200, controller.snapshot())
@@ -109,8 +118,8 @@ class Handler(BaseHTTPRequestHandler):
 
 def serve(host="127.0.0.1", port=8765):
     server = ThreadingHTTPServer((host, port), Handler)
-    print(f"Genesis Command Center: http://{host}:{port}")
-    print("Connected to the real Genesis engine. Press Ctrl+C to stop.")
+    print(f"KORDEX Command Center (Genesis project): http://{host}:{port}")
+    print("KORDEX local reliability-intelligence system ready. Press Ctrl+C to stop.")
     server.serve_forever()
 
 

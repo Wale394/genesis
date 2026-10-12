@@ -12,6 +12,8 @@ import math
 import re
 from numbers import Real
 
+from .telemetry_connector import TelemetryPacket
+
 
 # Exact diagnostic key names map to canonical Genesis fields. Vendor adapters
 # can extend or override this mapping through ``key_mappings``.
@@ -258,6 +260,38 @@ class ROS2TelemetryAdapter:
             },
             "limitations": limitations,
         }
+
+    def adapt_packet(self, diagnostic_array):
+        """Translate a ROS-like payload into the shared transport-independent packet.
+
+        This is a payload adapter only: it does not acquire messages from a live
+        ROS graph, authenticate the physical source, or issue robot commands.
+        """
+        snapshot = self.adapt(diagnostic_array)
+        telemetry = dict(snapshot["telemetry"])
+        telemetry.pop("time_step", None)
+        if not telemetry:
+            raise ValueError("ROS 2 payload contains no usable telemetry")
+
+        metadata = snapshot["source_metadata"]
+        provenance = {
+            "transport": "ROS 2",
+            "input_kind": "ROS 2 payload adapter; acquisition not performed; source not independently authenticated",
+            "diagnostic_components": list(metadata.get("diagnostic_components", [])),
+            "source_keys": dict(metadata.get("source_keys", {})),
+            "ignored_keys": list(metadata.get("ignored_keys", [])),
+        }
+        return TelemetryPacket(
+            robot_id=self.identity["robot_id"],
+            source="ros2",
+            timestamp=metadata.get("timestamp"),
+            signals=telemetry,
+            manufacturer=self.identity.get("manufacturer"),
+            robot_type=self.identity.get("robot_type"),
+            units=dict(metadata.get("units", {})),
+            provenance=provenance,
+            limitations=tuple(snapshot.get("limitations", [])),
+        )
 
     def ingest(self, diagnostic_array, *, time_step=None):
         """Alias for ``adapt`` when processing a live message stream."""

@@ -208,6 +208,10 @@ class GenesisAdversarialTests(unittest.TestCase):
 
     def test_h_existing_failure_trajectory_records_actual_observed_lead_time(self):
         data_path = Path(__file__).parent / "data" / "raw_dataset_v2.csv"
+        if not data_path.is_file():
+            self.skipTest(
+                "Optional local validation dataset is not included in the public release."
+            )
         with data_path.open(newline="", encoding="utf-8") as source:
             rows = list(csv.DictReader(source))
         candidates = {}

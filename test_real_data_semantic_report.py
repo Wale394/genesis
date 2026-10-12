@@ -77,7 +77,10 @@ def _write_csv(root, run_id, motor, rows):
 
 class RealDataSemanticReportTests(unittest.TestCase):
     def test_actual_workbook_metadata_is_read_without_optional_packages(self):
-        self.assertTrue(WORKBOOK.is_file())
+        if not WORKBOOK.is_file():
+            self.skipTest(
+                "Optional external dataset workbook is not included in the public release."
+            )
         runs = _read_test_conditions(WORKBOOK)
         self.assertEqual(len(runs), 23)
         self.assertTrue(any(item["description"] == "Pick up and place" for item in runs))

@@ -1,8 +1,10 @@
-# KORDEX — Engineering Intelligence
+# GENESIS — Engineering Reliability Platform
 
-**Evidence-driven reliability analysis for robots and physical systems.**
+**One engineering project. One reliability-intelligence system.**
 
-KORDEX is an early-stage project exploring how telemetry, historical observations, evidence quality, and operating context can help engineers investigate unusual behavior in robotic and other physical systems. The current Python engine is still internally named **Genesis**.
+Genesis is the project and repository. **KORDEX** is the reliability-intelligence system within it, built to help engineers investigate unusual behavior in robots and other physical systems.
+
+KORDEX is an early-stage system exploring how telemetry, historical observations, evidence quality, and operating context can help engineers investigate unusual behavior in robotic and other physical systems. The repository also contains the broader Genesis engineering foundation, research, offline workflows, and project-level interface. Internal Python modules retain the `genesis_system` namespace for compatibility.
 
 > **Project status:** research prototype. This repository is shared for technical review and discussion. It is not a validated safety-critical or predictive-maintenance product.
 
@@ -12,7 +14,7 @@ Robot operators often need to distinguish an unusual measurement from a real ass
 
 ## What the current prototype includes
 
-- A local browser-based operator interface (KORDEX Command Center).
+- A local browser-based operator interface for KORDEX, the reliability-intelligence system within Genesis.
 - Python processing for submitted or recorded telemetry, including pattern and observation-quality assessments.
 - Evidence summaries and lineage links that describe traceable relationships without claiming causation.
 - Investigation records, recommendations, and explicit limitations/unknowns.
