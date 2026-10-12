@@ -47,6 +47,7 @@ def _blind_result(dataset_root):
     genesis = Genesis()
     started = perf_counter()
     progress = {"processed": 0, "last_report": 0, "peak_bytes": None}
+    detection_timeline = []
     pipeline = genesis._pipeline
     original_evaluate = pipeline.evaluate
     try:
@@ -60,6 +61,18 @@ def _blind_result(dataset_root):
         if elapsed >= MAX_RUNTIME_SECONDS:
             raise ReplayTimeout(progress["processed"], elapsed, progress["peak_bytes"])
         result = original_evaluate(*args, **kwargs)
+        observation_index = progress["processed"]
+        observation = observations[observation_index]
+        source_metadata = observation.get("source_metadata") or {}
+        detections = _extract_observation_detections(result)
+        if detections["engineering_signals"] or detections["patterns"]:
+            detection_timeline.append({
+                "observation_index": observation_index + 1,
+                "source_timestamp": source_metadata.get("source_timestamp"),
+                "time_step": result.get("time_step"),
+                "engineering_signals": detections["engineering_signals"],
+                "patterns": detections["patterns"],
+            })
         progress["processed"] += 1
         if process is not None and progress["processed"] % 100 == 0:
             current_bytes = process.memory_info().rss
@@ -82,6 +95,7 @@ def _blind_result(dataset_root):
     patterns = deepcopy(evidence.get("pattern_evidence") or [])
     for signal in signals:
         signal.setdefault("observed_at_timestamp", final_metadata.get("source_timestamp"))
+    first_detection = detection_timeline[0] if detection_timeline else None
 
     return {
         "experiment": "GENESIS EXTERNAL DATA EXPERIMENT #1A",
@@ -116,12 +130,16 @@ def _blind_result(dataset_root):
             "temporal_analysis": {
                 "patterns_detected_in_final_result": patterns,
                 "pattern_analysis": deepcopy(evidence.get("pattern_analysis") or {}),
-                "timing_note": "Pattern evidence is the final batch result; Genesis does not expose first-detection timestamps in this API result.",
+                "first_detection_timestamp": first_detection.get("source_timestamp") if first_detection else None,
+                "detection_timeline": detection_timeline,
+                "timing_note": "Detection timing is captured from each chronological pipeline evaluation and matched to that observation's source timestamp. It is timing relative to dataset labels, not proof of a physical failure.",
             },
             "engineering_signals": {
                 "signals_in_final_result": signals,
                 "evaluated_at_timestamp": final_metadata.get("source_timestamp"),
-                "timing_note": "Signals are from the final observation evaluation; no first-detection timing is exposed by the batch API.",
+                "first_detection_timestamp": first_detection.get("source_timestamp") if first_detection else None,
+                "first_engineering_signal_timestamp": next((event["source_timestamp"] for event in detection_timeline if event["engineering_signals"]), None),
+                "timing_note": "Per-observation engineering signals and pattern evidence are recorded during chronological replay. Timestamps indicate first observed output, not a confirmed failure time.",
             },
             "ml": deepcopy(final.get("ml_inference") or {}),
             "diagnosis": deepcopy((final.get("ml_inference") or {}).get("diagnosis")),
@@ -153,6 +171,31 @@ def _blind_result(dataset_root):
     }
 
 
+def _extract_observation_detections(result):
+    """Extract only outputs produced for the current chronological observation."""
+    engineering = ((result.get("risk") or {}).get("engineering") or {})
+    signals = [
+        {
+            "signal": item.get("signal"),
+            "severity": item.get("severity"),
+            "value": item.get("value"),
+        }
+        for item in (engineering.get("signals") or [])
+        if isinstance(item, dict)
+    ]
+    synthesis = result.get("evidence_synthesis") or {}
+    patterns = []
+    for item in (synthesis.get("pattern_evidence") or []):
+        if not isinstance(item, dict):
+            continue
+        supporting_data = item.get("supporting_data") or {}
+        patterns.append({
+            "pattern": supporting_data.get("pattern"),
+            "statement": item.get("statement"),
+        })
+    return {"engineering_signals": signals, "patterns": patterns}
+
+
 def _post_hoc(dataset_root, blind):
     run = blind["blind_results"]["run"]
     labels = RealRobotDatasetAdapter(dataset_root, RUN_ID, MOTOR).load_ground_truth()
@@ -164,21 +207,23 @@ def _post_hoc(dataset_root, blind):
     genesis = blind["blind_results"]
     signals = genesis["engineering_signals"]["signals_in_final_result"]
     patterns = genesis["temporal_analysis"]["patterns_detected_in_final_result"]
+    timing = genesis["engineering_signals"].get("first_detection_timestamp")
     has_signal = bool(signals or patterns)
     first_label = positive[0].get("timestamp") if positive else None
-    final_timestamp = run["final_timestamp"]
     if not positive:
         category = "GROUND_TRUTH_NOT_OBSERVABLE"
     elif not has_signal:
         category = "INSUFFICIENT_EVIDENCE" if genesis["observation_quality"]["state"] != "AVAILABLE" else "NO_GENESIS_SIGNAL"
     else:
         try:
-            if float(final_timestamp) < float(first_label):
-                category = "GENESIS_SIGNAL_BEFORE_LABEL"
-            elif float(final_timestamp) == float(first_label):
-                category = "GENESIS_SIGNAL_MATCH"
+            if timing is None:
+                category = "SIGNAL_TIMING_NOT_CAPTURED"
+            elif float(timing) < float(first_label):
+                category = "GENESIS_FIRST_DETECTION_BEFORE_LABEL"
+            elif float(timing) == float(first_label):
+                category = "GENESIS_FIRST_DETECTION_MATCHES_LABEL"
             else:
-                category = "GENESIS_SIGNAL_AFTER_LABEL"
+                category = "GENESIS_FIRST_DETECTION_AFTER_LABEL"
         except (TypeError, ValueError):
             category = "GROUND_TRUTH_NOT_OBSERVABLE"
     return {
@@ -187,8 +232,9 @@ def _post_hoc(dataset_root, blind):
         "first_positive_label_timestamp": first_label,
         "last_positive_label_timestamp": positive[-1].get("timestamp") if positive else None,
         "genesis_signal_detected_in_final_result": has_signal,
+        "first_genesis_detection_timestamp": timing,
         "signal_timing_classification": category,
-        "timing_caveat": "The classification compares the final batch-evaluation timestamp with the first positive label. It does not establish when a signal first emerged during the stream.",
+        "timing_caveat": "The first detection timestamp comes from the chronological pipeline output for each observation and is compared with the first positive dataset label. This establishes ordering relative to the label only; it does not establish a physical failure time or predictive validity.",
         "notable_disagreements": [] if has_signal == bool(positive) else ["Final Genesis signal presence differs from whether positive labels exist."],
         "evidence_limitations": genesis["limitations"],
     }
@@ -227,7 +273,8 @@ def run(dataset_root, json_path="real-data-blind-1a.json", text_path="real-data-
     text.extend(["", "POST-HOC VALIDATION", f"Documented failure: {post_hoc['documented_failure_status']}",
                  f"Positive labels: {post_hoc['positive_label_count']}",
                  f"First positive label: {post_hoc['first_positive_label_timestamp']}",
-                 f"Final-result comparison: {post_hoc['signal_timing_classification']}",
+                 f"First-detection timing comparison: {post_hoc['signal_timing_classification']}",
+                 f"First Genesis detection: {post_hoc['first_genesis_detection_timestamp']}",
                  post_hoc["timing_caveat"]])
     Path(text_path).expanduser().write_text("\n".join(text) + "\n", encoding="utf-8")
     return result
